@@ -1,7 +1,10 @@
 docker_image/01-primeiro-dockerfile/projeto/
-docker_image/03-entrypoint-vs-cmd/input
-docker_image/03-entrypoint-vs-cmd/output
-docker_image/03-entrypoint-vs-cmd/videos
+*/input
+*/output
+*/videos
 
 
 
+input/
+output/
+videos/
