@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rota42/fastapi-app:latest
+    container_name: fastapi-app
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - ENV=development
+    volumes:
+      - .:/app
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import requests; requests.get(\"http://localhost:8000\")' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rota42/fastapi-app:latest
+    profiles:
+      - build
+    command: echo "Build concluído"
+
+networks:
+  default:
+    name: rota42-network
