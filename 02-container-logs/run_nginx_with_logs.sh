@@ -35,5 +35,5 @@ echo -e "\n=== 7. Validando que os logs antigos ainda estão no volume ==="
 docker exec meu-nginx2 ls -l /var/log/nginx
 docker exec meu-nginx2 cat /var/log/nginx/access.log | head -n 5
 
-echo -e "\n✅ Missão concluída: os logs persistem mesmo após remover o container!"
+echo -e "\n Missão concluída: os logs persistem mesmo após remover o container!"
 
