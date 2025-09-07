@@ -1,0 +1,59 @@
+# Arquivos de desenvolvimento
+.git
+.gitignore
+README.md
+Dockerfile*
+docker-compose*
+compose.yaml
+compose.yml
+
+# Diretórios de build e cache
+.cache
+dist/
+build/
+bin/
+target/
+
+# Logs e dados temporários
+*.log
+logs/
+temp/
+tmp/
+
+# Arquivos de teste
+*_test.go
+test/
+tests/
+coverage.txt
+coverage.out
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Arquivos de entrada e saída (evitar copiar vídeos grandes)
+input/
+output/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# Dependências node (se houver frontend)
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Arquivos de configuração local
+.env.local
+.env.development
+.env.test
+config.local.yaml

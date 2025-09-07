@@ -1,0 +1,104 @@
+services:
+  video-converter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+      args:
+        - BUILDKIT_INLINE_CACHE=1
+    image: rota42/video-converter:latest
+    container_name: video-converter
+    
+    # Variáveis de ambiente
+    environment:
+      - TZ=America/Sao_Paulo
+      - TEMP_DIR=/app/temp
+      - MAX_WORKERS=4
+      - LOG_LEVEL=info
+    
+    # Volumes para persistir dados
+    volumes:
+      - ./input:/app/input:ro          # Vídeos de entrada (somente leitura)
+      - ./output:/app/output:rw        # Vídeos convertidos
+      - ./temp:/app/temp:rw            # Arquivos temporários
+      - ./logs:/app/logs:rw            # Logs da aplicação
+    
+    # Recursos limitados
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Healthcheck
+    healthcheck:
+      test: ["CMD", "/app/video-converter", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    # Comando padrão com parâmetros dinâmicos
+    command: >
+      --input-dir=/app/input 
+      --output-dir=/app/output 
+      --format=${VIDEO_FORMAT:-mp4} 
+      --quality=${VIDEO_QUALITY:-medium} 
+      --workers=${MAX_WORKERS:-4}
+      --verbose
+
+  # Serviço auxiliar para monitoramento (opcional)
+  file-watcher:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: rota42/video-converter:latest
+    container_name: video-converter-watcher
+    
+    environment:
+      - TZ=America/Sao_Paulo
+      - WATCH_MODE=true
+    
+    volumes:
+      - ./input:/app/input:ro
+      - ./output:/app/output:rw
+      - ./temp:/app/temp:rw
+      - ./logs:/app/logs:rw
+    
+    command: >
+      --watch 
+      --input-dir=/app/input 
+      --output-dir=/app/output 
+      --auto-convert
+      --verbose
+    
+    depends_on:
+      - video-converter
+    
+    restart: unless-stopped
+
+# Volumes nomeados para dados persistentes
+volumes:
+  input_data:
+    driver: local
+  output_data:
+    driver: local
+  temp_data:
+    driver: local
+  logs_data:
+    driver: local
+
+# Rede personalizada
+networks:
+  video-processing:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
