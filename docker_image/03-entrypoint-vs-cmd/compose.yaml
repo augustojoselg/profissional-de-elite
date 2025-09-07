@@ -1,0 +1,42 @@
+services:
+  video-converter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rota42/video-converter:latest
+    volumes:
+      # Volume para arquivos de entrada
+      - ./input:/videos:ro
+      # Volume para arquivos de saída
+      - ./output:/output:rw
+    # Exemplo de uso padrão (mostra help)
+    # Para sobrescrever, use: docker compose run video-converter input.mp4 webm
+
+  # Serviço de exemplo para conversão específica
+  convert-example:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rota42/video-converter:latest
+    volumes:
+      - ./input:/videos:ro
+      - ./output:/output:rw
+    # Exemplo: converter sample.mp4 para webm
+    command: ["sample.mp4", "webm"]
+    profiles:
+      - example
+
+  # Serviço interativo para desenvolvimento/debug
+  converter-shell:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rota42/video-converter:latest
+    volumes:
+      - ./input:/videos:ro
+      - ./output:/output:rw
+    entrypoint: ["/bin/bash"]
+    stdin_open: true
+    tty: true
+    profiles:
+      - dev
